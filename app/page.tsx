@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Header from "@/components/Header";
 import QuickActions from "@/components/QuickActions";
 import WalletCard from "@/components/WalletCard";
@@ -14,6 +14,8 @@ import LoanOverviewScreen from "@/components/LoanOverviewScreen";
 import LoanDetailScreen from "@/components/LoanDetailScreen";
 import PaymentAmountScreen from "@/components/PaymentAmountScreen";
 import SecurePaymentScreen from "@/components/SecurePaymentScreen";
+import PaymentLoadingScreen from "@/components/PaymentLoadingScreen";
+import TransactionSuccessScreen from "@/components/TransactionSuccessScreen";
 
 type Screen =
   | "home"
@@ -23,17 +25,36 @@ type Screen =
   | "loanOverview"
   | "loanDetail"
   | "paymentAmount"
-  | "securePayment";
+  | "securePayment"
+  | "paymentPin"
+  | "paymentLoading"
+  | "transactionSuccess";
+
+function generateTxId(): string {
+  return String(Math.floor(10000000000 + Math.random() * 90000000000));
+}
+
+const TX_AMOUNT = "3.683.000đ";
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("home");
+  const [txTime, setTxTime] = useState<Date>(new Date());
+  const [txId, setTxId] = useState<string>("");
 
+  const handlePaymentPinSuccess = useCallback(() => {
+    setTxTime(new Date());
+    setTxId(generateTxId());
+    setScreen("paymentLoading");
+  }, []);
+
+  /* ── Loan auth PIN ── */
   if (screen === "pin")
     return <PinScreen onSuccess={() => setScreen("loading")} onBack={() => setScreen("home")} />;
 
   if (screen === "loading")
     return <LoadingScreen onComplete={() => setScreen("loan")} />;
 
+  /* ── Loan flow ── */
   if (screen === "loan")
     return <LoanScreen onBack={() => setScreen("home")} onStart={() => setScreen("loanOverview")} />;
 
@@ -43,12 +64,42 @@ export default function Home() {
   if (screen === "loanDetail")
     return <LoanDetailScreen onBack={() => setScreen("loanOverview")} onPayment={() => setScreen("paymentAmount")} />;
 
+  /* ── Payment flow ── */
   if (screen === "paymentAmount")
     return <PaymentAmountScreen onBack={() => setScreen("loanDetail")} onPay={() => setScreen("securePayment")} />;
 
   if (screen === "securePayment")
-    return <SecurePaymentScreen onBack={() => setScreen("paymentAmount")} onConfirm={() => setScreen("home")} />;
+    return (
+      <SecurePaymentScreen
+        onBack={() => setScreen("paymentAmount")}
+        onConfirm={() => setScreen("paymentPin")}
+      />
+    );
 
+  if (screen === "paymentPin")
+    return (
+      <PinScreen
+        title="Xác thực thanh toán"
+        subtitle="Nhập mã PIN để tiếp tục"
+        onSuccess={handlePaymentPinSuccess}
+        onBack={() => setScreen("securePayment")}
+      />
+    );
+
+  if (screen === "paymentLoading")
+    return <PaymentLoadingScreen onComplete={() => setScreen("transactionSuccess")} />;
+
+  if (screen === "transactionSuccess")
+    return (
+      <TransactionSuccessScreen
+        onBack={() => setScreen("home")}
+        amount={TX_AMOUNT}
+        txTime={txTime}
+        txId={txId}
+      />
+    );
+
+  /* ── Home ── */
   return (
     <main className="min-h-screen bg-white pb-[80px]">
       <Header />

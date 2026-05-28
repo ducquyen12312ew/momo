@@ -7,9 +7,16 @@ const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"];
 interface PinScreenProps {
   onSuccess: () => void;
   onBack: () => void;
+  title?: string;
+  subtitle?: string;
 }
 
-export default function PinScreen({ onSuccess, onBack }: PinScreenProps) {
+export default function PinScreen({
+  onSuccess,
+  onBack,
+  title = "Xác thực giao dịch",
+  subtitle = "Vui lòng nhập mã PIN để tiếp tục",
+}: PinScreenProps) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
@@ -68,10 +75,8 @@ export default function PinScreen({ onSuccess, onBack }: PinScreenProps) {
           </svg>
         </div>
 
-        <h1 className="text-[22px] font-bold text-[#222222] mb-2">Xác thực giao dịch</h1>
-        <p className="text-[14px] text-[#777777] text-center mb-10">
-          Vui lòng nhập mã PIN để tiếp tục
-        </p>
+        <h1 className="text-[22px] font-bold text-[#222222] mb-2">{title}</h1>
+        <p className="text-[14px] text-[#777777] text-center mb-10">{subtitle}</p>
 
         {/* PIN dots */}
         <div className={`flex gap-5 mb-3 ${shake ? "animate-shake" : ""}`}>
