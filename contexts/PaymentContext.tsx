@@ -5,7 +5,7 @@ export interface Transaction {
   id: string;
   type: string;
   amount: string;
-  time: string; // ISO string
+  time: string;
   icon: string;
 }
 
@@ -30,15 +30,18 @@ const PaymentContext = createContext<PaymentContextType>({
 });
 
 export function PaymentProvider({ children }: { children: ReactNode }) {
+  // Start with default state — matches server render, no hydration mismatch
   const [state, setState] = useState<PaymentState>(DEFAULT_STATE);
-  const [ready, setReady] = useState(false);
 
+  // Hydrate from localStorage only on client after mount
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setState(JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw) as PaymentState;
+        setState(parsed);
+      }
     } catch {}
-    setReady(true);
   }, []);
 
   const markAsPaid = useCallback((txId: string, amount: string, time: Date) => {
@@ -54,15 +57,18 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
         isPaid: true,
         transactions: [tx, ...prev.transactions],
       };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {}
       return next;
     });
   }, []);
 
-  if (!ready) return <>{children}</>;
-
+  // Always wrap with Provider — no conditional skip that causes hydration mismatch
   return (
-    <PaymentContext.Provider value={{ isPaid: state.isPaid, transactions: state.transactions, markAsPaid }}>
+    <PaymentContext.Provider
+      value={{ isPaid: state.isPaid, transactions: state.transactions, markAsPaid }}
+    >
       {children}
     </PaymentContext.Provider>
   );
