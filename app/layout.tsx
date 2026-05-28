@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { PaymentProvider } from "@/contexts/PaymentContext";
 
 export const metadata: Metadata = {
   title: "MoMo - Ví Điện Tử",
@@ -19,16 +20,12 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi">
       <body className="bg-[#F0F0F0] min-h-screen">
         <div className="mx-auto max-w-[390px] min-h-screen bg-white relative overflow-hidden shadow-xl">
-          {children}
+          <PaymentProvider>{children}</PaymentProvider>
         </div>
       </body>
     </html>

@@ -3,7 +3,11 @@ import { useState } from "react";
 import SafeImage from "./SafeImage";
 import { NAV_ITEMS } from "@/constants";
 
-export default function BottomNav() {
+interface BottomNavProps {
+  onHistoryClick?: () => void;
+}
+
+export default function BottomNav({ onHistoryClick }: BottomNavProps) {
   const [activeTab, setActiveTab] = useState("qr");
 
   return (
@@ -48,7 +52,10 @@ export default function BottomNav() {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => {
+                setActiveTab(item.id);
+                if (item.id === "history") onHistoryClick?.();
+              }}
               className="flex flex-col items-center gap-1 relative py-0.5 px-3"
             >
               <div className="relative">

@@ -1,5 +1,6 @@
 "use client";
 import SafeImage from "./SafeImage";
+import { usePayment } from "@/contexts/PaymentContext";
 
 interface LoanDetailScreenProps {
   onBack: () => void;
@@ -35,6 +36,10 @@ const LOAN_INFO = [
 ];
 
 export default function LoanDetailScreen({ onBack, onPayment }: LoanDetailScreenProps) {
+  const { isPaid } = usePayment();
+  const displayInstallments = isPaid
+    ? INSTALLMENTS.map((i) => ({ ...i, amount: "0đ", status: "paid" as const }))
+    : INSTALLMENTS;
   return (
     <div className="min-h-screen flex flex-col animate-screenIn" style={{ background: "#F5F5F5" }}>
 
@@ -105,7 +110,7 @@ export default function LoanDetailScreen({ onBack, onPayment }: LoanDetailScreen
             </div>
 
             {/* Rows */}
-            {INSTALLMENTS.map((item, idx) => (
+            {displayInstallments.map((item, idx) => (
               <div key={item.period}>
                 <div className="grid grid-cols-[2fr_2.5fr_2fr] items-center px-4 py-3.5">
                   <div>
@@ -243,14 +248,45 @@ export default function LoanDetailScreen({ onBack, onPayment }: LoanDetailScreen
           paddingBottom: "max(env(safe-area-inset-bottom, 0px), 20px)",
         }}
       >
+        {/* Success info box when paid */}
+        {isPaid && (
+          <div
+            className="flex items-center gap-2.5 rounded-2xl px-4 py-3 mb-3"
+            style={{ background: "#E8F8EC", border: "1px solid #B7E4C7" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+              <circle cx="12" cy="12" r="10" stroke="#2E7D32" strokeWidth="2"/>
+              <path d="M8 12l3 3 5-5" stroke="#2E7D32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span className="text-[13px] font-semibold" style={{ color: "#1B5E20" }}>
+              Khoản vay đã được thanh toán đầy đủ
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-3">
-          <button className="h-[54px] rounded-2xl font-bold text-[16px] text-[#555] border-2 border-[#E0E0E0] bg-white active:bg-[#F5F5F5] transition-colors">
+          <button
+            disabled={isPaid}
+            className="h-[54px] rounded-2xl font-bold text-[16px] border-2 transition-colors"
+            style={{
+              background: isPaid ? "#F5F5F5" : "white",
+              borderColor: isPaid ? "#E8E8E8" : "#E0E0E0",
+              color: isPaid ? "#BBBBBB" : "#555",
+              cursor: isPaid ? "not-allowed" : "pointer",
+            }}
+          >
             Tất toán
           </button>
           <button
-            onClick={onPayment}
-            className="h-[54px] rounded-2xl font-bold text-[16px] text-white active:opacity-90 transition-opacity"
-            style={{ background: "#EC407A", boxShadow: "0 4px 14px rgba(236,64,122,0.35)" }}
+            onClick={isPaid ? undefined : onPayment}
+            disabled={isPaid}
+            className="h-[54px] rounded-2xl font-bold text-[16px] transition-opacity"
+            style={{
+              background: isPaid ? "#E0E0E0" : "#EC407A",
+              color: isPaid ? "#BBBBBB" : "white",
+              cursor: isPaid ? "not-allowed" : "pointer",
+              boxShadow: isPaid ? "none" : "0 4px 14px rgba(236,64,122,0.35)",
+            }}
           >
             Thanh toán
           </button>
