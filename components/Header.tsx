@@ -44,13 +44,12 @@ export default function Header() {
           </div>
           <div className="relative mt-0.5">
             <SafeImage
-              src="/images/icon-notification.svg"
+              src="/image/icon-notification.png"
               alt="Thông báo"
               width={24}
               height={24}
               className="w-6 h-6"
             />
-            {/* Badge */}
             <span className="absolute -top-1.5 -right-2 bg-[#FF3B30] text-white text-[9px] font-bold px-1 py-0.5 rounded-full leading-none min-w-[18px] text-center">
               99+
             </span>
@@ -67,7 +66,7 @@ export default function Header() {
             className="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 active:bg-white/30"
           >
             <SafeImage
-              src={showBalance ? "/images/icon-eye.svg" : "/images/icon-eye-off.svg"}
+              src={showBalance ? "/image/icon-eye.png" : "/image/icon-eye-off.png"}
               alt={showBalance ? "Ẩn số dư" : "Hiện số dư"}
               width={18}
               height={18}
@@ -78,7 +77,7 @@ export default function Header() {
 
         {/* Slogan */}
         <div
-          className="text-[22px] italic font-handwritten text-[#EC407A]"
+          className="text-[22px] italic text-[#EC407A]"
           style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}
         >
           Uống nước nhớ nguồn

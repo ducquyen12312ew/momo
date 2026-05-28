@@ -16,11 +16,10 @@ export default function SafeImage({ src, alt, className, width, height, style }:
   if (error) {
     return (
       <div
-        className={`bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs ${className}`}
-        style={{ width, height, ...style }}
-      >
-        {alt[0]?.toUpperCase() ?? "?"}
-      </div>
+        className={className}
+        style={{ width, height, background: "transparent", ...style }}
+        aria-label={alt}
+      />
     );
   }
 

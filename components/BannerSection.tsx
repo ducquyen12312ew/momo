@@ -7,10 +7,10 @@ export default function BannerSection() {
         <span className="text-[14px] font-bold text-[#333333]">Sự kiện đang diễn ra</span>
         <button className="text-[12px] text-[#EC407A] font-medium">Xem thêm</button>
       </div>
-      <div className="rounded-[16px] overflow-hidden" style={{ height: 110 }}>
+      <div className="rounded-[16px] overflow-hidden bg-transparent" style={{ height: 110 }}>
         <SafeImage
-          src="/images/banner-event.svg"
-          alt="Sự kiện"
+          src="/image/banner.jpg"
+          alt="Sự kiện đang diễn ra"
           className="w-full h-full object-cover"
           width={358}
           height={110}
