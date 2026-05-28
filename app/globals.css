@@ -37,3 +37,31 @@ html, body {
 .font-handwritten {
   font-family: 'Brush Script MT', 'Segoe Script', cursive;
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+  20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeSlideIn {
+  animation: fadeSlideIn 0.2s ease-out forwards;
+}
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-screenIn {
+  animation: screenIn 0.25s ease-out forwards;
+}
