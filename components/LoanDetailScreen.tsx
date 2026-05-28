@@ -3,6 +3,7 @@ import SafeImage from "./SafeImage";
 
 interface LoanDetailScreenProps {
   onBack: () => void;
+  onPayment: () => void;
 }
 
 interface Installment {
@@ -33,7 +34,7 @@ const LOAN_INFO = [
   { label: "Thời hạn", value: "9 tháng" },
 ];
 
-export default function LoanDetailScreen({ onBack }: LoanDetailScreenProps) {
+export default function LoanDetailScreen({ onBack, onPayment }: LoanDetailScreenProps) {
   return (
     <div className="min-h-screen flex flex-col animate-screenIn" style={{ background: "#F5F5F5" }}>
 
@@ -247,6 +248,7 @@ export default function LoanDetailScreen({ onBack }: LoanDetailScreenProps) {
             Tất toán
           </button>
           <button
+            onClick={onPayment}
             className="h-[54px] rounded-2xl font-bold text-[16px] text-white active:opacity-90 transition-opacity"
             style={{ background: "#EC407A", boxShadow: "0 4px 14px rgba(236,64,122,0.35)" }}
           >

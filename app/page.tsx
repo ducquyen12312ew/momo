@@ -12,50 +12,42 @@ import LoadingScreen from "@/components/LoadingScreen";
 import LoanScreen from "@/components/LoanScreen";
 import LoanOverviewScreen from "@/components/LoanOverviewScreen";
 import LoanDetailScreen from "@/components/LoanDetailScreen";
+import PaymentAmountScreen from "@/components/PaymentAmountScreen";
+import SecurePaymentScreen from "@/components/SecurePaymentScreen";
 
-type Screen = "home" | "pin" | "loading" | "loan" | "loanOverview" | "loanDetail";
+type Screen =
+  | "home"
+  | "pin"
+  | "loading"
+  | "loan"
+  | "loanOverview"
+  | "loanDetail"
+  | "paymentAmount"
+  | "securePayment";
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("home");
 
-  if (screen === "pin") {
-    return (
-      <PinScreen
-        onSuccess={() => setScreen("loading")}
-        onBack={() => setScreen("home")}
-      />
-    );
-  }
+  if (screen === "pin")
+    return <PinScreen onSuccess={() => setScreen("loading")} onBack={() => setScreen("home")} />;
 
-  if (screen === "loading") {
+  if (screen === "loading")
     return <LoadingScreen onComplete={() => setScreen("loan")} />;
-  }
 
-  if (screen === "loan") {
-    return (
-      <LoanScreen
-        onBack={() => setScreen("home")}
-        onStart={() => setScreen("loanOverview")}
-      />
-    );
-  }
+  if (screen === "loan")
+    return <LoanScreen onBack={() => setScreen("home")} onStart={() => setScreen("loanOverview")} />;
 
-  if (screen === "loanOverview") {
-    return (
-      <LoanOverviewScreen
-        onBack={() => setScreen("loan")}
-        onViewDetail={() => setScreen("loanDetail")}
-      />
-    );
-  }
+  if (screen === "loanOverview")
+    return <LoanOverviewScreen onBack={() => setScreen("loan")} onViewDetail={() => setScreen("loanDetail")} />;
 
-  if (screen === "loanDetail") {
-    return (
-      <LoanDetailScreen
-        onBack={() => setScreen("loanOverview")}
-      />
-    );
-  }
+  if (screen === "loanDetail")
+    return <LoanDetailScreen onBack={() => setScreen("loanOverview")} onPayment={() => setScreen("paymentAmount")} />;
+
+  if (screen === "paymentAmount")
+    return <PaymentAmountScreen onBack={() => setScreen("loanDetail")} onPay={() => setScreen("securePayment")} />;
+
+  if (screen === "securePayment")
+    return <SecurePaymentScreen onBack={() => setScreen("paymentAmount")} onConfirm={() => setScreen("home")} />;
 
   return (
     <main className="min-h-screen bg-white pb-[80px]">
