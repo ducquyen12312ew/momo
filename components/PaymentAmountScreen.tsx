@@ -5,9 +5,10 @@ import SafeImage from "./SafeImage";
 interface PaymentAmountScreenProps {
   onBack: () => void;
   onPay: () => void;
+  onHome: () => void;
 }
 
-export default function PaymentAmountScreen({ onBack, onPay }: PaymentAmountScreenProps) {
+export default function PaymentAmountScreen({ onBack, onPay, onHome }: PaymentAmountScreenProps) {
   const [selected, setSelected] = useState<"current" | "other">("current");
 
   return (
@@ -24,11 +25,14 @@ export default function PaymentAmountScreen({ onBack, onPay }: PaymentAmountScre
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="#333" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </button>
           <span className="text-[17px] font-bold text-[#222]">Chi tiết khoản vay</span>
-          <button className="h-9 px-2.5 rounded-full bg-white/70 flex items-center gap-1.5 active:bg-white/90">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/></svg>
-            <div className="w-px h-4 bg-[#CCC]" />
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/></svg>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/></svg>
+            </button>
+            <button onClick={onHome} className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -38,8 +42,8 @@ export default function PaymentAmountScreen({ onBack, onPay }: PaymentAmountScre
         {/* Loan info card */}
         <div className="bg-white rounded-3xl overflow-hidden" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.06)" }}>
           <div className="flex items-start gap-3 px-5 pt-5 pb-4">
-            <div className="w-10 h-10 flex-shrink-0 mt-0.5">
-              <SafeImage src="/image/loan-orange.png" alt="Vay Nhanh" width={40} height={40} className="w-10 h-10 object-contain" />
+            <div className="w-14 h-14 flex-shrink-0">
+              <SafeImage src="/image/loan-orange.png" alt="Vay Nhanh" width={56} height={56} className="w-14 h-14 object-contain" />
             </div>
             <div>
               <p className="text-[16px] font-bold text-[#222]">Vay Nhanh</p>

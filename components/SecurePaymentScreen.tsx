@@ -183,7 +183,7 @@ export default function SecurePaymentScreen({ onBack, onConfirm }: SecurePayment
         <div className="flex items-center justify-between mb-3">
           <span className="text-[14px] text-[#666]">Tổng tiền</span>
           <div className="flex items-center gap-1.5">
-            <span className="text-[20px] font-black text-[#111]">3.683.000đ</span>
+            <span className="text-[20px] font-semibold text-[#111]">3.683.000đ</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6-6-6 6" stroke="#888" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </div>
         </div>

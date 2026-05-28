@@ -5,6 +5,7 @@ import { usePayment } from "@/contexts/PaymentContext";
 interface LoanDetailScreenProps {
   onBack: () => void;
   onPayment: () => void;
+  onHome: () => void;
 }
 
 interface Installment {
@@ -35,7 +36,7 @@ const LOAN_INFO = [
   { label: "Thời hạn", value: "9 tháng" },
 ];
 
-export default function LoanDetailScreen({ onBack, onPayment }: LoanDetailScreenProps) {
+export default function LoanDetailScreen({ onBack, onPayment, onHome }: LoanDetailScreenProps) {
   const { isPaid } = usePayment();
   const displayInstallments = isPaid
     ? INSTALLMENTS.map((i) => ({ ...i, amount: "0đ", status: "paid" as const }))
@@ -69,17 +70,14 @@ export default function LoanDetailScreen({ onBack, onPayment }: LoanDetailScreen
             </svg>
           </button>
           <span className="text-[17px] font-bold text-[#222]">Thông tin khoản vay</span>
-          <button className="h-9 px-2.5 rounded-full bg-white/70 flex items-center gap-1.5 active:bg-white/90">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/>
-              <path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            <div className="w-px h-4 bg-[#CCC]" />
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/></svg>
+            </button>
+            <button onClick={onHome} className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/></svg>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import SafeImage from "./SafeImage";
+import { usePayment } from "@/contexts/PaymentContext";
 
 interface LoanOverviewScreenProps {
   onBack: () => void;
   onViewDetail: () => void;
+  onHome: () => void;
 }
 
 const INFO_ITEMS = [
@@ -17,7 +19,9 @@ const INFO_ITEMS = [
 export default function LoanOverviewScreen({
   onBack,
   onViewDetail,
+  onHome,
 }: LoanOverviewScreenProps) {
+  const { isPaid } = usePayment();
   const [activeTab, setActiveTab] = useState<"overview" | "news">("overview");
 
   return (
@@ -58,12 +62,13 @@ export default function LoanOverviewScreen({
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <button className="h-9 px-2.5 rounded-full bg-white/70 flex items-center gap-1.5 active:bg-white/90">
+            <button className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                 <circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/>
                 <path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
               </svg>
-              <div className="w-px h-4 bg-[#CCC]" />
+            </button>
+            <button onClick={onHome} className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 <polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/>
@@ -103,24 +108,24 @@ export default function LoanOverviewScreen({
         >
           {/* Top section: pink tint */}
           <div className="relative px-5 pt-5 pb-4" style={{ background: "#FFF8FB" }}>
-            {/* Decorative image */}
-            <div className="absolute left-3 top-2 opacity-80">
+            {/* Decorative image — bigger */}
+            <div className="absolute left-1 top-1 opacity-85">
               <SafeImage
                 src="/image/loan-card.png"
                 alt="Khoản vay"
-                width={80}
-                height={80}
-                className="w-20 h-20 object-contain"
+                width={100}
+                height={100}
+                className="w-[100px] h-[100px] object-contain"
               />
             </div>
 
             {/* Content */}
-            <div className="ml-16 flex items-start justify-between">
+            <div className="ml-20 flex items-start justify-between">
               <div>
                 <p className="text-[13px] font-semibold text-[#555] mb-1">
                   Khoản vay của bạn
                 </p>
-                <p className="text-[30px] font-black text-[#111] leading-tight tracking-tight">
+                <p className="text-[28px] font-semibold text-[#111] leading-tight tracking-tight">
                   9.000.000đ
                 </p>
               </div>
@@ -167,9 +172,17 @@ export default function LoanOverviewScreen({
           className="bg-white rounded-2xl px-5 py-4 flex items-center justify-between"
           style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
         >
-          <span className="text-[15px] font-semibold text-[#222]">
-            Lịch sử khoản vay (1)
-          </span>
+          {isPaid ? (
+            <div className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="#2E7D32" strokeWidth="2"/>
+                <path d="M8 12l3 3 5-5" stroke="#2E7D32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-[14px] font-semibold" style={{ color:"#2E7D32" }}>Không còn khoản vay nào</span>
+            </div>
+          ) : (
+            <span className="text-[15px] font-semibold text-[#222]">Lịch sử khoản vay (1)</span>
+          )}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M6 9l6 6 6-6" stroke="#888" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>

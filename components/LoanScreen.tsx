@@ -4,9 +4,10 @@ import SafeImage from "./SafeImage";
 interface LoanScreenProps {
   onBack: () => void;
   onStart: () => void;
+  onHome: () => void;
 }
 
-export default function LoanScreen({ onBack, onStart }: LoanScreenProps) {
+export default function LoanScreen({ onBack, onStart, onHome }: LoanScreenProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col animate-screenIn">
       {/* ── Header ── */}
@@ -43,16 +44,11 @@ export default function LoanScreen({ onBack, onStart }: LoanScreenProps) {
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
-            <button className="h-9 px-2.5 rounded-full bg-white/70 flex items-center gap-1.5 active:bg-white/90">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/>
-                <path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-              <div className="w-px h-4 bg-[#CCCCCC]" />
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/>
-              </svg>
+            <button className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#555" strokeWidth="2"/><path d="M12 8v4M12 16h.01" stroke="#555" strokeWidth="2" strokeLinecap="round"/></svg>
+            </button>
+            <button onClick={onHome} className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center active:bg-white/90">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#555" strokeWidth="2" strokeLinejoin="round"/></svg>
             </button>
           </div>
         </div>
