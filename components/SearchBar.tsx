@@ -24,10 +24,7 @@ export default function SearchBar({ onVayNhanhClick }: SearchBarProps) {
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -44,19 +41,19 @@ export default function SearchBar({ onVayNhanhClick }: SearchBarProps) {
 
   return (
     <div ref={containerRef} className="px-4 py-2 relative z-30">
-      {/* Input row */}
+      {/* Input */}
       <div
-        className={`flex items-center gap-2 bg-[#F5F5F5] h-[42px] px-3 transition-all duration-200 ${
-          isOpen ? "rounded-t-[18px] bg-white border border-b-0 border-[#EEEEEE]" : "rounded-[18px]"
+        className={`flex items-center gap-2 h-[42px] px-3 transition-all duration-200 ${
+          isOpen
+            ? "rounded-t-[18px] bg-white border border-b-0 border-[#EEEEEE]"
+            : "bg-[#F5F5F5] rounded-[18px]"
         }`}
       >
-        <SafeImage
-          src="/image/icon-search.png"
-          alt="Tìm kiếm"
-          width={18}
-          height={18}
-          className="w-[18px] h-[18px] flex-shrink-0 opacity-50"
-        />
+        {/* Inline search icon */}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 opacity-40">
+          <circle cx="11" cy="11" r="8" stroke="#555" strokeWidth="2"/>
+          <path d="M21 21l-4.35-4.35" stroke="#555" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
         <input
           ref={inputRef}
           type="text"
@@ -64,7 +61,7 @@ export default function SearchBar({ onVayNhanhClick }: SearchBarProps) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
           placeholder="Tìm số điện thoại chuyển tiền 📞"
-          className="flex-1 bg-transparent text-[13px] text-[#333333] placeholder:text-[#AAAAAA] outline-none"
+          className="flex-1 bg-transparent text-[13px] text-[#333] placeholder:text-[#AAAAAA] outline-none"
         />
         {query.length > 0 && (
           <button
@@ -75,7 +72,7 @@ export default function SearchBar({ onVayNhanhClick }: SearchBarProps) {
             }}
             className="w-[18px] h-[18px] rounded-full bg-[#CCCCCC] flex items-center justify-center flex-shrink-0"
           >
-            <svg width="8" height="8" viewBox="0 0 8 8" fill="white">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
               <path d="M1 1l6 6M7 1L1 7" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </button>
@@ -98,28 +95,16 @@ export default function SearchBar({ onVayNhanhClick }: SearchBarProps) {
                 <button
                   onMouseDown={() => handleItemClick(item.id, item.enabled)}
                   className={`flex items-center gap-3 w-full px-4 py-3 text-left transition-colors ${
-                    item.enabled
-                      ? "active:bg-[#FFF0F5] cursor-pointer"
-                      : "opacity-50 cursor-not-allowed"
+                    item.enabled ? "active:bg-[#FFF0F5] cursor-pointer" : "opacity-50 cursor-not-allowed"
                   }`}
                   disabled={!item.enabled}
                 >
                   <div className="w-10 h-10 rounded-2xl overflow-hidden flex-shrink-0 bg-[#F5F5F5]">
-                    <SafeImage
-                      src={item.icon}
-                      alt={item.label}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 object-cover"
-                    />
+                    <SafeImage src={item.icon} alt={item.label} width={40} height={40} className="w-10 h-10 object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-semibold text-[#333333] truncate">
-                      {item.label}
-                    </div>
-                    <div className="text-[12px] text-[#888888] truncate">
-                      {item.subtitle}
-                    </div>
+                    <div className="text-[14px] font-semibold text-[#333] truncate">{item.label}</div>
+                    <div className="text-[12px] text-[#888] truncate">{item.subtitle}</div>
                   </div>
                   {item.enabled ? (
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
@@ -131,9 +116,7 @@ export default function SearchBar({ onVayNhanhClick }: SearchBarProps) {
                     </span>
                   )}
                 </button>
-                {index < filtered.length - 1 && (
-                  <div className="h-px bg-[#F8F8F8] ml-[68px]" />
-                )}
+                {index < filtered.length - 1 && <div className="h-px bg-[#F8F8F8] ml-[68px]" />}
               </div>
             ))
           )}

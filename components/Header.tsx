@@ -1,87 +1,107 @@
 "use client";
 import { useState } from "react";
-import SafeImage from "./SafeImage";
 import { BALANCE_HIDDEN, BALANCE_VISIBLE } from "@/constants";
 
 export default function Header() {
   const [showBalance, setShowBalance] = useState(false);
 
   return (
-    <div className="relative overflow-hidden" style={{ minHeight: 220 }}>
-      {/* Gradient background */}
+    <div className="relative overflow-hidden bg-white" style={{ minHeight: 195 }}>
+
+      {/* ── Decorative pink blobs ── */}
       <div
-        className="absolute inset-0"
+        className="absolute pointer-events-none"
         style={{
-          background: "linear-gradient(135deg, #7CB342 0%, #8BC34A 30%, #9CCC65 60%, #AED581 100%)",
+          top: -40, right: -40,
+          width: 180, height: 180,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #FDEAF4 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          bottom: -30, left: -30,
+          width: 140, height: 140,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #FCE4EC 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          top: "40%", left: "45%",
+          width: 100, height: 100,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, #FFF1F7 0%, transparent 70%)",
         }}
       />
 
-      {/* Contour / wave pattern overlay */}
+      {/* ── Subtle wave lines ── */}
       <svg
-        className="absolute inset-0 w-full h-full opacity-20"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 390 220"
-        preserveAspectRatio="xMidYMid slice"
+        className="absolute bottom-0 left-0 w-full pointer-events-none"
+        height="55"
+        viewBox="0 0 390 55"
+        preserveAspectRatio="none"
       >
-        <ellipse cx="350" cy="30" rx="120" ry="80" fill="none" stroke="white" strokeWidth="1.5" opacity="0.6"/>
-        <ellipse cx="350" cy="30" rx="90" ry="55" fill="none" stroke="white" strokeWidth="1" opacity="0.5"/>
-        <ellipse cx="350" cy="30" rx="60" ry="35" fill="none" stroke="white" strokeWidth="0.8" opacity="0.4"/>
-        <ellipse cx="-20" cy="180" rx="130" ry="90" fill="none" stroke="white" strokeWidth="1.5" opacity="0.5"/>
-        <ellipse cx="-20" cy="180" rx="100" ry="65" fill="none" stroke="white" strokeWidth="1" opacity="0.4"/>
-        <path d="M0 120 Q80 80 160 110 T320 100 T390 90" fill="none" stroke="white" strokeWidth="1" opacity="0.35"/>
-        <path d="M0 140 Q100 110 200 130 T390 120" fill="none" stroke="white" strokeWidth="0.8" opacity="0.3"/>
-        <path d="M0 160 Q120 140 240 155 T390 145" fill="none" stroke="white" strokeWidth="0.7" opacity="0.25"/>
-        <circle cx="180" cy="200" r="70" fill="none" stroke="white" strokeWidth="1" opacity="0.15"/>
-        <circle cx="180" cy="200" r="45" fill="none" stroke="white" strokeWidth="0.8" opacity="0.12"/>
+        <path d="M0 35 Q50 15 100 30 T200 28 T300 32 T390 25" fill="none" stroke="#EC407A" strokeWidth="1" opacity="0.12"/>
+        <path d="M0 45 Q60 25 120 40 T240 38 T390 35" fill="none" stroke="#EC407A" strokeWidth="0.8" opacity="0.08"/>
+        <path d="M0 55 Q80 38 160 50 T320 48 T390 45" fill="none" stroke="#FCB0C8" strokeWidth="1" opacity="0.1"/>
       </svg>
 
-      {/* Content */}
-      <div className="relative z-10 px-4 pt-4 pb-5">
-        {/* Top row: time + notification */}
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <div className="text-[15px] font-semibold text-[#333333]">15:33</div>
-          </div>
-          <div className="relative mt-0.5">
-            <SafeImage
-              src="/image/icon-notification.png"
-              alt="Thông báo"
-              width={24}
-              height={24}
-              className="w-6 h-6"
-            />
-            <span className="absolute -top-1.5 -right-2 bg-[#FF3B30] text-white text-[9px] font-bold px-1 py-0.5 rounded-full leading-none min-w-[18px] text-center">
+      {/* ── Content ── */}
+      <div className="relative z-10 px-4 pt-4 pb-6">
+
+        {/* Row 1: time + notification */}
+        <div className="flex items-start justify-between mb-4">
+          <span className="text-[15px] font-semibold text-[#333]">15:33</span>
+
+          <div className="relative">
+            {/* Inline notification bell */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#333" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+            <span
+              className="absolute -top-1.5 -right-2 bg-[#FF3B30] text-white text-[9px] font-bold px-1 py-0.5 rounded-full leading-none min-w-[18px] text-center"
+            >
               99+
             </span>
           </div>
         </div>
 
-        {/* Balance row */}
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[34px] font-bold text-[#222222] leading-tight tracking-tight">
+        {/* Row 2: balance + eye toggle */}
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-[34px] font-black text-[#111] leading-none tracking-tight">
             {showBalance ? BALANCE_VISIBLE : BALANCE_HIDDEN}
           </span>
           <button
-            onClick={() => setShowBalance(!showBalance)}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-white/20 active:bg-white/30"
+            onClick={() => setShowBalance((p) => !p)}
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-[#F5F5F5] active:bg-[#EEEEEE]"
           >
-            <SafeImage
-              src={showBalance ? "/image/icon-eye.png" : "/image/icon-eye-off.png"}
-              alt={showBalance ? "Ẩn số dư" : "Hiện số dư"}
-              width={18}
-              height={18}
-              className="w-[18px] h-[18px] opacity-80"
-            />
+            {showBalance ? (
+              /* Eye open */
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="#777" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="#777" strokeWidth="2"/>
+              </svg>
+            ) : (
+              /* Eye closed */
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="#777" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="1" y1="1" x2="23" y2="23" stroke="#777" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            )}
           </button>
         </div>
 
-        {/* Slogan */}
-        <div
-          className="text-[22px] italic text-[#EC407A]"
-          style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive" }}
+        {/* Row 3: slogan */}
+        <p
+          className="text-[21px] italic text-[#EC407A]"
+          style={{ fontFamily: "'Brush Script MT','Segoe Script',cursive" }}
         >
           Uống nước nhớ nguồn
-        </div>
+        </p>
       </div>
     </div>
   );

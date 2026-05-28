@@ -11,13 +11,14 @@ export default function ServiceGrid() {
             className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
           >
             <div className="relative">
-              <div className="w-[52px] h-[52px] rounded-2xl overflow-hidden flex items-center justify-center bg-[#F5F5F5]">
+              {/* Icon: 44px (was 52px) */}
+              <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-[#F5F5F5]">
                 <SafeImage
                   src={service.icon}
                   alt={service.label}
-                  width={52}
-                  height={52}
-                  className="w-[52px] h-[52px] object-cover"
+                  width={44}
+                  height={44}
+                  className="w-11 h-11 object-cover"
                 />
               </div>
               {service.badge && (
@@ -26,7 +27,7 @@ export default function ServiceGrid() {
                 </span>
               )}
             </div>
-            <span className="text-[11px] text-[#555555] text-center leading-tight line-clamp-2 w-full px-0.5">
+            <span className="text-[11px] text-[#555] text-center leading-tight line-clamp-2 w-full px-0.5">
               {service.label}
             </span>
           </button>
