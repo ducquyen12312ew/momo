@@ -3,9 +3,10 @@ import SafeImage from "./SafeImage";
 
 interface LoanScreenProps {
   onBack: () => void;
+  onStart: () => void;
 }
 
-export default function LoanScreen({ onBack }: LoanScreenProps) {
+export default function LoanScreen({ onBack, onStart }: LoanScreenProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col animate-screenIn">
       {/* ── Header ── */}
@@ -107,6 +108,7 @@ export default function LoanScreen({ onBack }: LoanScreenProps) {
         className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] bg-white px-4 pb-8 pt-3 border-t border-[#F5F5F5]"
       >
         <button
+          onClick={onStart}
           className="w-full h-[58px] bg-[#EC407A] rounded-2xl text-white text-[17px] font-bold tracking-wide active:bg-[#D81B60] transition-colors"
           style={{ boxShadow: "0 6px 20px rgba(236,64,122,0.35)" }}
         >

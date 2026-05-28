@@ -10,8 +10,10 @@ import BottomNav from "@/components/BottomNav";
 import PinScreen from "@/components/PinScreen";
 import LoadingScreen from "@/components/LoadingScreen";
 import LoanScreen from "@/components/LoanScreen";
+import LoanOverviewScreen from "@/components/LoanOverviewScreen";
+import LoanDetailScreen from "@/components/LoanDetailScreen";
 
-type Screen = "home" | "pin" | "loading" | "loan";
+type Screen = "home" | "pin" | "loading" | "loan" | "loanOverview" | "loanDetail";
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("home");
@@ -30,7 +32,29 @@ export default function Home() {
   }
 
   if (screen === "loan") {
-    return <LoanScreen onBack={() => setScreen("home")} />;
+    return (
+      <LoanScreen
+        onBack={() => setScreen("home")}
+        onStart={() => setScreen("loanOverview")}
+      />
+    );
+  }
+
+  if (screen === "loanOverview") {
+    return (
+      <LoanOverviewScreen
+        onBack={() => setScreen("loan")}
+        onViewDetail={() => setScreen("loanDetail")}
+      />
+    );
+  }
+
+  if (screen === "loanDetail") {
+    return (
+      <LoanDetailScreen
+        onBack={() => setScreen("loanOverview")}
+      />
+    );
   }
 
   return (
