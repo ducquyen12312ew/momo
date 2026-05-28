@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-const CORRECT_PIN = "211104";
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"];
 
 interface PinScreenProps {
@@ -18,41 +17,34 @@ export default function PinScreen({
   subtitle = "Vui lòng nhập mã PIN để tiếp tục",
 }: PinScreenProps) {
   const [pin, setPin] = useState("");
-  const [error, setError] = useState("");
-  const [shake, setShake] = useState(false);
+  // Cooldown ref to prevent double-fire on mobile (onClick fires after touch events)
+  const lastTap = useRef(0);
 
   const handleKey = (key: string) => {
-    if (shake) return;
+    // Debounce: ignore taps within 120ms of the previous one
+    const now = Date.now();
+    if (now - lastTap.current < 120) return;
+    lastTap.current = now;
+
     if (key === "⌫") {
       setPin((p) => p.slice(0, -1));
-      setError("");
       return;
     }
-    if (pin.length >= 6) return;
 
-    const next = pin + key;
-    setPin(next);
-    setError("");
-
-    if (next.length === 6) {
-      setTimeout(() => {
-        if (next === CORRECT_PIN) {
-          onSuccess();
-        } else {
-          setShake(true);
-          setError("Mã PIN không chính xác");
-          setTimeout(() => {
-            setPin("");
-            setShake(false);
-          }, 600);
-        }
-      }, 150);
-    }
+    setPin((prev) => {
+      if (prev.length >= 6) return prev;
+      const next = prev + key;
+      if (next.length === 6) {
+        // Any 6-digit PIN is accepted — navigate after brief visual feedback
+        setTimeout(onSuccess, 180);
+      }
+      return next;
+    });
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col animate-screenIn">
-      {/* Header */}
+      {/* Back button */}
       <div className="flex items-center px-4 pt-14 pb-2">
         <button
           onClick={onBack}
@@ -64,7 +56,6 @@ export default function PinScreen({
         </button>
       </div>
 
-      {/* Body */}
       <div className="flex-1 flex flex-col items-center px-6 pt-6">
         {/* Lock icon */}
         <div className="w-16 h-16 rounded-full bg-[#FCE4EC] flex items-center justify-center mb-5">
@@ -75,35 +66,26 @@ export default function PinScreen({
           </svg>
         </div>
 
-        <h1 className="text-[22px] font-bold text-[#222222] mb-2">{title}</h1>
-        <p className="text-[14px] text-[#777777] text-center mb-10">{subtitle}</p>
+        <h1 className="text-[22px] font-bold text-[#222] mb-2">{title}</h1>
+        <p className="text-[14px] text-[#777] text-center mb-10">{subtitle}</p>
 
         {/* PIN dots */}
-        <div className={`flex gap-5 mb-3 ${shake ? "animate-shake" : ""}`}>
+        <div className="flex gap-5 mb-8">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               className={`w-[14px] h-[14px] rounded-full border-2 transition-all duration-150 ${
                 pin.length > i
-                  ? error
-                    ? "bg-red-500 border-red-500 scale-110"
-                    : "bg-[#EC407A] border-[#EC407A] scale-110"
+                  ? "bg-[#EC407A] border-[#EC407A] scale-110"
                   : "bg-transparent border-[#DDDDDD]"
               }`}
             />
           ))}
         </div>
 
-        {/* Error */}
-        <div className="h-6 flex items-center justify-center">
-          {error && (
-            <p className="text-[13px] text-red-500 font-medium">{error}</p>
-          )}
-        </div>
-
         <div className="flex-1" />
 
-        {/* Keypad */}
+        {/* Keypad — onClick only, no onMouseDown/onTouchStart */}
         <div className="w-full max-w-[300px] mb-10">
           <div className="grid grid-cols-3 gap-3">
             {KEYS.map((key, i) => {
@@ -111,12 +93,9 @@ export default function PinScreen({
               return (
                 <button
                   key={i}
-                  onMouseDown={() => handleKey(key)}
                   onClick={() => handleKey(key)}
                   className={`h-[64px] rounded-2xl flex items-center justify-center transition-all active:scale-95 select-none ${
-                    key === "⌫"
-                      ? "bg-transparent"
-                      : "bg-[#F5F5F5] active:bg-[#EAEAEA]"
+                    key === "⌫" ? "bg-transparent" : "bg-[#F5F5F5] active:bg-[#EAEAEA]"
                   }`}
                 >
                   {key === "⌫" ? (
@@ -125,7 +104,7 @@ export default function PinScreen({
                       <path d="M14 6l-4 6M10 6l4 6" stroke="#555" strokeWidth="1.8" strokeLinecap="round"/>
                     </svg>
                   ) : (
-                    <span className="text-[26px] font-semibold text-[#222222]">{key}</span>
+                    <span className="text-[26px] font-semibold text-[#222]">{key}</span>
                   )}
                 </button>
               );
