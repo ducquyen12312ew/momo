@@ -1,17 +1,21 @@
 import SafeImage from "./SafeImage";
 import { SERVICES } from "@/constants";
 
-export default function ServiceGrid() {
+interface ServiceGridProps {
+  onServiceClick?: (id: string) => void;
+}
+
+export default function ServiceGrid({ onServiceClick }: ServiceGridProps) {
   return (
     <div className="px-3 py-2">
       <div className="grid grid-cols-4 gap-x-1 gap-y-4">
         {SERVICES.map((service) => (
           <button
             key={service.id}
+            onClick={() => onServiceClick?.(service.id)}
             className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
           >
             <div className="relative">
-              {/* Icon: 44px (was 52px) */}
               <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-[#F5F5F5]">
                 <SafeImage
                   src={service.icon}

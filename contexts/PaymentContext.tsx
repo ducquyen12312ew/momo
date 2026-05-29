@@ -69,17 +69,19 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       isLoan: true,
     };
     setState((prev) => {
+      const existing = Array.isArray(prev.loanTransactions) ? prev.loanTransactions : [];
       const next: PaymentState = {
         isPaid: true,
-        loanTransactions: [tx, ...prev.loanTransactions],
+        loanTransactions: [tx, ...existing],
       };
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
       return next;
     });
   }, []);
 
-  // Expose: real loan payments first, then fake history
-  const allTransactions = [...state.loanTransactions, ...FAKE_HISTORY];
+  // Expose: real loan payments first, then fake history — guard against corrupt localStorage
+  const loanTxs = Array.isArray(state.loanTransactions) ? state.loanTransactions : [];
+  const allTransactions = [...loanTxs, ...FAKE_HISTORY];
 
   return (
     <PaymentContext.Provider value={{ isPaid: state.isPaid, transactions: allTransactions, markAsPaid }}>

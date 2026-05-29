@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
 
 interface BottomNavProps {
-  onHistoryClick?: () => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
 }
 
 const TABS = [
@@ -13,14 +13,7 @@ const TABS = [
   { id: "user",    label: "Tôi" },
 ];
 
-export default function BottomNav({ onHistoryClick }: BottomNavProps) {
-  const [activeTab, setActiveTab] = useState("qr");
-
-  const handleTab = (id: string) => {
-    setActiveTab(id);
-    if (id === "history") onHistoryClick?.();
-  };
-
+export default function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <div
       className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] bg-white border-t border-[#EEEEEE] z-50"
@@ -36,11 +29,11 @@ export default function BottomNav({ onHistoryClick }: BottomNavProps) {
 
           if (tab.isCenter) {
             return (
-              <button key={tab.id} onClick={() => handleTab(tab.id)} className="flex flex-col items-center gap-1 -mt-5">
+              <button key={tab.id} onClick={() => onTabChange(tab.id)} className="flex flex-col items-center gap-1 -mt-5 active:scale-95 transition-transform">
                 <div className="w-14 h-14 rounded-full bg-[#EC407A] flex items-center justify-center shadow-lg shadow-[#EC407A]/40">
                   <QRIcon />
                 </div>
-                <span className="text-[10px] font-semibold" style={{ color }}>
+                <span className="text-[10px] font-semibold" style={{ color: isActive ? "#EC407A" : "#BDBDBD" }}>
                   {tab.label}
                 </span>
               </button>
@@ -50,8 +43,8 @@ export default function BottomNav({ onHistoryClick }: BottomNavProps) {
           return (
             <button
               key={tab.id}
-              onClick={() => handleTab(tab.id)}
-              className="flex flex-col items-center gap-1 relative py-0.5 px-3"
+              onClick={() => onTabChange(tab.id)}
+              className="flex flex-col items-center gap-1 relative py-0.5 px-3 active:scale-95 transition-transform"
             >
               <div className="relative">
                 <TabIcon id={tab.id} color={color} />

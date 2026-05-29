@@ -2,6 +2,7 @@
 import { useState, useRef } from "react";
 
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"];
+const VALID_PIN = "151103";
 
 interface PinScreenProps {
   onSuccess: () => void;
@@ -17,16 +18,20 @@ export default function PinScreen({
   subtitle = "Vui lòng nhập mã PIN để tiếp tục",
 }: PinScreenProps) {
   const [pin, setPin] = useState("");
-  // Cooldown ref to prevent double-fire on mobile (onClick fires after touch events)
+  const [error, setError] = useState(false);
+  const [shaking, setShaking] = useState(false);
   const lastTap = useRef(0);
+  const processingRef = useRef(false);
 
   const handleKey = (key: string) => {
-    // Debounce: ignore taps within 120ms of the previous one
     const now = Date.now();
     if (now - lastTap.current < 120) return;
     lastTap.current = now;
 
+    if (processingRef.current) return;
+
     if (key === "⌫") {
+      setError(false);
       setPin((p) => p.slice(0, -1));
       return;
     }
@@ -35,20 +40,33 @@ export default function PinScreen({
       if (prev.length >= 6) return prev;
       const next = prev + key;
       if (next.length === 6) {
-        // Any 6-digit PIN is accepted — navigate after brief visual feedback
-        setTimeout(onSuccess, 180);
+        processingRef.current = true;
+        if (next === VALID_PIN) {
+          setTimeout(() => {
+            processingRef.current = false;
+            onSuccess();
+          }, 180);
+        } else {
+          setError(true);
+          setShaking(true);
+          setTimeout(() => {
+            setShaking(false);
+            setPin("");
+            setError(false);
+            processingRef.current = false;
+          }, 600);
+        }
       }
       return next;
     });
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col animate-screenIn">
-      {/* Back button */}
+    <div className="min-h-screen bg-white flex flex-col animate-slideUp">
       <div className="flex items-center px-4 pt-14 pb-2">
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-full bg-[#F5F5F5] flex items-center justify-center active:bg-[#EEEEEE]"
+          className="w-9 h-9 rounded-full bg-[#F5F5F5] flex items-center justify-center active:bg-[#EEEEEE] transition-colors"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="#333" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -57,7 +75,6 @@ export default function PinScreen({
       </div>
 
       <div className="flex-1 flex flex-col items-center px-6 pt-6">
-        {/* Lock icon */}
         <div className="w-16 h-16 rounded-full bg-[#FCE4EC] flex items-center justify-center mb-5">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <rect x="3" y="11" width="18" height="12" rx="3" stroke="#EC407A" strokeWidth="2"/>
@@ -70,22 +87,29 @@ export default function PinScreen({
         <p className="text-[14px] text-[#777] text-center mb-10">{subtitle}</p>
 
         {/* PIN dots */}
-        <div className="flex gap-5 mb-8">
+        <div className={`flex gap-5 mb-3 ${shaking ? "animate-shake" : ""}`}>
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
               className={`w-[14px] h-[14px] rounded-full border-2 transition-all duration-150 ${
                 pin.length > i
-                  ? "bg-[#EC407A] border-[#EC407A] scale-110"
+                  ? error
+                    ? "bg-[#E53935] border-[#E53935] scale-110"
+                    : "bg-[#EC407A] border-[#EC407A] scale-110"
                   : "bg-transparent border-[#DDDDDD]"
               }`}
             />
           ))}
         </div>
 
+        {/* Error message */}
+        <div className={`h-6 flex items-center justify-center mb-6 transition-all duration-200 ${error ? "opacity-100" : "opacity-0"}`}>
+          <span className="text-[13px] font-medium text-[#E53935]">Mã PIN không chính xác</span>
+        </div>
+
         <div className="flex-1" />
 
-        {/* Keypad — onClick only, no onMouseDown/onTouchStart */}
+        {/* Keypad */}
         <div className="w-full max-w-[300px] mb-10">
           <div className="grid grid-cols-3 gap-3">
             {KEYS.map((key, i) => {
