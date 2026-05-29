@@ -13,11 +13,11 @@ export default function IOSNotification({ amount, onDismiss }: IOSNotificationPr
   useEffect(() => {
     // Trigger slide-in on next frame
     const t1 = setTimeout(() => setVisible(true), 20);
-    // Auto-dismiss after 4s
+    // Auto-dismiss after 8s
     const t2 = setTimeout(() => {
       setVisible(false);
       setTimeout(onDismiss, 400);
-    }, 4000);
+    }, 8000);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [onDismiss]);
 

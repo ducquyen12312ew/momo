@@ -31,6 +31,7 @@ import MovieScreen from "@/components/MovieScreen";
 import ReceiveBankSheet from "@/components/ReceiveBankSheet";
 import ReceiveAmountScreen from "@/components/ReceiveAmountScreen";
 import ReceiveLoadingScreen from "@/components/ReceiveLoadingScreen";
+import ReceiveOTPScreen from "@/components/ReceiveOTPScreen";
 import IOSNotification from "@/components/IOSNotification";
 
 type Screen =
@@ -42,7 +43,7 @@ type Screen =
   | "promotions" | "profile" | "qrcode"
   | "transfer" | "topup" | "data" | "bill" | "movie"
   | "featureDemo"
-  | "receiveAmount" | "receiveLoading";
+  | "receiveAmount" | "receivePIN" | "receiveOTP" | "receiveLoading";
 
 interface FeatureDemoMeta { title: string; description?: string }
 
@@ -161,7 +162,7 @@ export default function Home() {
 
   const handleReceiveConfirm = useCallback((amount: number) => {
     setPendingReceiveAmount(amount);
-    setScreen("receiveLoading");
+    setScreen("receivePIN");           // step 1: PIN
   }, []);
 
   const handleReceiveComplete = useCallback(() => {
@@ -219,6 +220,36 @@ export default function Home() {
   /* ── Receive flow ── */
   if (screen === "receiveAmount")
     return <ReceiveAmountScreen onBack={() => setScreen("home")} onConfirm={handleReceiveConfirm} />;
+
+  if (screen === "receivePIN")
+    return (
+      <PinScreen
+        title="Xác thực nhận tiền"
+        subtitle="Nhập mã PIN để tiếp tục"
+        onSuccess={() => setScreen("receiveOTP")}
+        onBack={() => setScreen("receiveAmount")}
+      />
+    );
+
+  if (screen === "receiveOTP")
+    return (
+      <div className="min-h-screen bg-[#F7F8FA] relative">
+        {/* Muted background while OTP overlay is shown */}
+        <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center">
+          <div className="w-16 h-16 rounded-full bg-[#FCE4EC] flex items-center justify-center mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.06 6.06l1.27-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="#EC407A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[16px] font-bold text-[#1A1A2E]">Đang xác thực giao dịch</p>
+          <p className="text-[13px] text-[#AAAAAA] mt-1">Vui lòng chờ trong giây lát</p>
+        </div>
+        <ReceiveOTPScreen
+          amount={pendingReceiveAmount}
+          onSuccess={() => setScreen("receiveLoading")}
+        />
+      </div>
+    );
 
   if (screen === "receiveLoading")
     return <ReceiveLoadingScreen amount={pendingReceiveAmount} onComplete={handleReceiveComplete} />;

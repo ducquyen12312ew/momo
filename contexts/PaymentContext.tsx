@@ -113,6 +113,7 @@ export function PaymentProvider({ children }: { children: ReactNode }) {
       const existing = Array.isArray(prev.receivedTransactions) ? prev.receivedTransactions : [];
       const next: PaymentState = {
         ...prev,
+        isPaid: false,        // receiving fresh money resets loan-paid state
         receivedAmount: amount,
         receivedTransactions: [tx, ...existing],
       };
