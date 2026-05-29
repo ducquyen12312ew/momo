@@ -28,6 +28,10 @@ import TransferScreen from "@/components/TransferScreen";
 import TopupScreen from "@/components/TopupScreen";
 import BillScreen from "@/components/BillScreen";
 import MovieScreen from "@/components/MovieScreen";
+import ReceiveBankSheet from "@/components/ReceiveBankSheet";
+import ReceiveAmountScreen from "@/components/ReceiveAmountScreen";
+import ReceiveLoadingScreen from "@/components/ReceiveLoadingScreen";
+import IOSNotification from "@/components/IOSNotification";
 
 type Screen =
   | "home" | "pin" | "loading" | "loan"
@@ -37,7 +41,8 @@ type Screen =
   | "history" | "transactionReceipt"
   | "promotions" | "profile" | "qrcode"
   | "transfer" | "topup" | "data" | "bill" | "movie"
-  | "featureDemo";
+  | "featureDemo"
+  | "receiveAmount" | "receiveLoading";
 
 interface FeatureDemoMeta { title: string; description?: string }
 
@@ -81,11 +86,17 @@ export default function Home() {
   const [txId, setTxId] = useState<string>("");
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [featureMeta, setFeatureMeta] = useState<FeatureDemoMeta>({ title: "" });
-  const { markAsPaid } = usePayment();
+  const [showBankSheet, setShowBankSheet] = useState(false);
+  const [pendingReceiveAmount, setPendingReceiveAmount] = useState(0);
+  const [notification, setNotification] = useState<{ key: number; amount: string } | null>(null);
+  const [notifKey, setNotifKey] = useState(0);
+
+  const { markAsPaid, markAsReceived } = usePayment();
 
   const goHome = useCallback(() => {
     setScreen("home");
     setActiveTab("home");
+    setShowBankSheet(false);
   }, []);
 
   const handlePaymentPinSuccess = useCallback(() => {
@@ -108,6 +119,7 @@ export default function Home() {
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
+    setShowBankSheet(false);
     if (tab === "home") setScreen("home");
     else if (tab === "gift") setScreen("promotions");
     else if (tab === "qr") setScreen("qrcode");
@@ -136,12 +148,32 @@ export default function Home() {
     };
     const target = screenMap[id];
     if (target) {
-      if (target === "featureDemo") {
-        setFeatureMeta(SERVICE_DEMO_META[id] ?? { title: id });
-      }
+      if (target === "featureDemo") setFeatureMeta(SERVICE_DEMO_META[id] ?? { title: id });
       setScreen(target);
     }
   }, []);
+
+  // Receive flow
+  const handleBankSelect = useCallback((_bank: "tcb") => {
+    setShowBankSheet(false);
+    setScreen("receiveAmount");
+  }, []);
+
+  const handleReceiveConfirm = useCallback((amount: number) => {
+    setPendingReceiveAmount(amount);
+    setScreen("receiveLoading");
+  }, []);
+
+  const handleReceiveComplete = useCallback(() => {
+    const id = generateTxId();
+    const time = new Date();
+    markAsReceived(pendingReceiveAmount, id, time);
+    // Show iOS notification on home
+    const key = notifKey + 1;
+    setNotifKey(key);
+    setNotification({ key, amount: `${pendingReceiveAmount.toLocaleString("vi-VN")}đ` });
+    goHome();
+  }, [markAsReceived, pendingReceiveAmount, notifKey, goHome]);
 
   /* ── Loan auth PIN ── */
   if (screen === "pin")
@@ -184,6 +216,13 @@ export default function Home() {
   if (screen === "transactionReceipt" && selectedTx)
     return <TransactionReceiptScreen tx={selectedTx} onBack={() => setScreen("history")} />;
 
+  /* ── Receive flow ── */
+  if (screen === "receiveAmount")
+    return <ReceiveAmountScreen onBack={() => setScreen("home")} onConfirm={handleReceiveConfirm} />;
+
+  if (screen === "receiveLoading")
+    return <ReceiveLoadingScreen amount={pendingReceiveAmount} onComplete={handleReceiveComplete} />;
+
   /* ── Tab screens ── */
   if (screen === "history")
     return (
@@ -218,29 +257,28 @@ export default function Home() {
     );
 
   /* ── Service screens ── */
-  if (screen === "transfer")
-    return <TransferScreen onBack={goHome} />;
-
-  if (screen === "topup")
-    return <TopupScreen onBack={goHome} />;
-
-  if (screen === "data")
-    return <TopupScreen onBack={goHome} isData />;
-
-  if (screen === "bill")
-    return <BillScreen onBack={goHome} />;
-
-  if (screen === "movie")
-    return <MovieScreen onBack={goHome} />;
-
+  if (screen === "transfer") return <TransferScreen onBack={goHome} />;
+  if (screen === "topup") return <TopupScreen onBack={goHome} />;
+  if (screen === "data") return <TopupScreen onBack={goHome} isData />;
+  if (screen === "bill") return <BillScreen onBack={goHome} />;
+  if (screen === "movie") return <MovieScreen onBack={goHome} />;
   if (screen === "featureDemo")
     return <FeatureDemoScreen title={featureMeta.title} description={featureMeta.description} onBack={goHome} />;
 
   /* ── Home ── */
   return (
-    <main className="min-h-screen bg-white pb-[80px]">
+    <main className="min-h-screen bg-white pb-[80px] relative">
+      {/* iOS notification on home */}
+      {notification && (
+        <IOSNotification
+          key={notification.key}
+          amount={notification.amount}
+          onDismiss={() => setNotification(null)}
+        />
+      )}
+
       <Header />
-      <QuickActions />
+      <QuickActions onReceiveClick={() => setShowBankSheet(true)} />
       <WalletCard />
       <SearchBar
         onVayNhanhClick={() => setScreen("pin")}
@@ -251,6 +289,14 @@ export default function Home() {
       <div className="h-2 bg-[#F5F5F5] my-1" />
       <BannerSection />
       <BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+
+      {/* Bank selection sheet — rendered over home */}
+      {showBankSheet && (
+        <ReceiveBankSheet
+          onSelectBank={handleBankSelect}
+          onClose={() => setShowBankSheet(false)}
+        />
+      )}
     </main>
   );
 }
