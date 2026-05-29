@@ -4,7 +4,7 @@ import { usePayment } from "@/contexts/PaymentContext";
 import { Transaction } from "@/contexts/PaymentContext";
 import Header from "@/components/Header";
 import QuickActions from "@/components/QuickActions";
-import WalletCard from "@/components/WalletCard";
+import HeroBanner from "@/components/HeroBanner";
 import SearchBar from "@/components/SearchBar";
 import ServiceGrid from "@/components/ServiceGrid";
 import BannerSection from "@/components/BannerSection";
@@ -277,9 +277,9 @@ export default function Home() {
         />
       )}
 
-      <Header />
+      <Header onTopupClick={() => setScreen("topup")} />
       <QuickActions onReceiveClick={() => setShowBankSheet(true)} />
-      <WalletCard />
+      <HeroBanner />
       <SearchBar
         onVayNhanhClick={() => setScreen("pin")}
         onServiceClick={handleSearchServiceClick}
